@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+<mapper namespace="com.test.classes.dao.ClassesDao">  
+  
+    <resultMap id="ClassesMap" type="com.test.classes.domain.Classes">  
+        <id property="classId" column="class_id" />  
+        <result property="className" column="class_name" />  
+    </resultMap>  
+  
+  	<!-- 根据班级ID查询班级信息 -->
+    <select id="getClasses" parameterType="java.lang.Integer" resultMap="ClassesMap">  
+        SELECT  
+        t.class_id,  
+        t.class_name  
+        FROM classes t  
+        WHERE t.class_id = #{classId}  
+    </select>  
+    
+    
+    
+    <resultMap id="oneTOMany" type="com.test.classes.domain.Classes">
+    	<id property="classId" column="class_id"/>
+    	<result property="className" column="class_name"/>
+    	<!-- collection property="student" 对应Classes实体类中的 private List<Student> student; -->
+    	<collection property="student"  ofType="com.test.classes.domain.Student">
+    		<id property="studentId" column="student_id"/>
+    		<result property="name" column="name"/>
+    		<result property="age" column="age"/>
+    		<result property="classId" column="class_id"/>
+    	</collection>
+    
+    </resultMap>
+    
+    <sql id="queryColumns">
+    	a.class_id AS "classId",
+    	a.class_name AS "className",
+    	b.student_id AS "Student.studentId",
+    	b.name AS "Student.name",
+    	b.age AS "Student.age",
+    	b.class_id AS "Student.classId"
+    
+    </sql>
+    
+     <!-- 一对多查询 -->
+     <select id="selectList" parameterType="java.util.Map" resultMap="oneTOMany">
+
+    	select <!-- <include refid="queryColumns" /> -->
+    	a.class_id, a.class_name, b.student_id, b.name, b.age, b.class_id
+	 	from classes a left join student b on a.class_id=b.class_id
+	 	where a.class_id=#{class_id}
+
+	</select>
+    
+     <!-- 查询总记录数  -->
+    <select id="selectCount" parameterType="java.util.Map" resultType="int">
+    	select count(1) from (
+    	select a.class_id, a.class_name, b.student_id, b.name, b.age, b.class_id classId
+	 	from classes a left join student b on a.class_id=b.class_id
+	 	where a.class_id=#{class_id}
+    	)t                                                   
+    	 
+	</select>                                         
+	
+	 <!-- 分页查询 -->
+ 	<select id="selectPage" parameterType="java.util.Map" resultMap="oneTOMany">
+		 select * from (
+	 	select a.class_id, a.class_name, b.student_id, b.name, b.age, b.class_id classId
+	 	from classes a left join student b on a.class_id=b.class_id
+	 	where a.class_id=#{class_id}
+	 	)t limit #{offsetCurrent} , #{size}
+   
+	</select>                                                       
+  
+</mapper>  

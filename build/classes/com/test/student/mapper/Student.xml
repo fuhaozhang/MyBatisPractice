@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >  
+<mapper namespace="com.test.student.dao.StudentDao">  
+  
+    <!-- 一对一关联 方式一 begin -->  
+    <select id="selectAllStudent1" resultType="com.test.student.domain.Student">  
+        SELECT  
+        t.student_id as studentId,  
+        t.name as name,  
+        t.age as age,  
+        t.class_id as classId,  
+        t2.class_id "classes.classId",  
+        t2.class_name "classes.className"  
+        FROM student t  
+        LEFT JOIN classes t2 ON t.class_id=t2.class_id  
+    </select>  
+    <select id="selectAllStudent11" parameterType="java.util.Map" resultType="com.test.student.domain.Student">  
+        SELECT  
+        t.student_id as studentId,  
+        t.name as name,  
+        t.age as age,  
+        t.class_id as classId,  
+        t2.class_id "classes.classId",  
+        t2.class_name "classes.className"  
+        FROM student t  
+        LEFT JOIN classes t2 ON t.class_id=t2.class_id where t.class_id=#{class_id} and t.name=#{name}
+    </select> 
+    <!-- 一对一关联 方式一 end -->  
+  
+  
+  
+    <!-- 一对一关联 方式二 begin -->  
+    <!-- 引用classes目录下Classes.xml的resultMap 方法 -->
+    <!-- <resultMap id="StudentMap2" type="com.test.student.domain.Student">  
+        <id property="studentId" column="student_id" />  
+        <result property="name" column="name" />  
+        <result property="age" column="age" />  
+        <result property="classId" column="class_id" />  
+        <association property="classes" resultMap="com.test.classes.dao.ClassesDao.ClassesMap" />  
+    </resultMap>   -->
+    
+    <resultMap id="StudentMap2" type="com.test.student.domain.Student">  
+        <id property="studentId" column="student_id" />  
+        <result property="name" column="name" />  
+        <result property="age" column="age" />  
+        <result property="classId" column="class_id" />  
+        <association property="classes" javaType="com.test.student.domain.Classes">  
+            <id property="classId" column="class_id" />  
+            <result property="className" column="class_name" />  
+        </association>  
+    </resultMap>  
+    <select id="selectAllStudent2" resultMap="StudentMap2">  
+        SELECT  
+        t.student_id,  
+        t.name,  
+        t.age,  
+        t.class_id,  
+        t2.class_name  
+        FROM student t  
+        LEFT JOIN classes t2 ON t.class_id=t2.class_id  
+    </select>  
+    <!-- 一对一关联 方式二 end -->  
+  
+  
+ 
+    
+
+  
+</mapper>  

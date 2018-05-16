@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace指用户自定义的命名空间。 -->
+<mapper namespace="com.test.user.mapper.UserMapper">
+
+<!-- 
+	id="save"是唯一的标示符
+	parameterType属性指明插入时使用的参数类型
+	useGeneratedKeys="true"表示使用数据库的自动增长策略
+ -->
+  <insert id="save" parameterType="com.test.user.domain.User" useGeneratedKeys="true">
+  	INSERT INTO TB_USER(name,sex,age) 
+  	VALUES(#{name},#{sex},#{age})
+  </insert>
+  
+  <!-- select操作
+  parameterType="int"表示该查询语句需要一个int类型的参数
+  resultType="user"表示返回的是一个user对象 -->
+  <select id="selectUser" parameterType="int" resultType="com.test.user.domain.User">
+  	SELECT * FROM TB_USER WHERE id = #{id}
+  </select>
+  
+   <!-- update操作 
+  parameterType="user"表示该更新语句需要一个user对象作为参数-->
+  <update id="modifyUser" parameterType="com.test.user.domain.User">
+  	UPDATE TB_USER 
+  	SET name = #{name},sex = #{sex},age = #{age}
+  	WHERE id = #{id}
+  </update>
+  
+  <!-- delete操作 parameterType="int"表示该查询语句需要一个int类型的参数-->
+  <delete id="removeUser" parameterType="int">
+  	DELETE FROM TB_USER WHERE id = #{id}
+  </delete>
+
+</mapper>

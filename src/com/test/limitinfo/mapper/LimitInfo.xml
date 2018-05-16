@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace指用户自定义的命名空间。 -->
+<mapper namespace="com.test.limitinfo.dao.LimitInfoDao">
+	<sql id="queryColumns">
+		a.id AS "id",
+		a.credit_limit_num AS "creditLimitNum",
+		a.customer_name AS "customerName",
+		a.customer_id AS "customerId",
+		a.start_date AS "startDate",
+		a.expiration_date AS "expirationDate",
+		a.term AS "term",
+		a.term_unit_cd AS "termUnitCd",
+		a.credit_limit AS "creditLimit",
+		a.available_limit AS "availableLimit",
+		a.outstnd_limit AS "outstndLimit",
+		a.currency_cd AS "currencyCd",
+		a.limit_status_cd AS "limitStatusCd",
+		a.channel_type AS "channelType",
+		a.create_by AS "createBy",
+		a.create_time AS "createTime",
+		a.update_by AS "updateBy",
+		a.modify_time AS "modifyTime",
+		a.remarks AS "remarks",
+		a.old_credit_limit_num AS "oldCreditLimitNum",
+		a.invalid_term AS "invalidTerm",
+		a.customer_type_cd AS "customerTypeCd",
+		a.identy_ind AS "identyInd",
+		a.freeze_ind AS "freezeInd",
+		a.freeze_amt AS "freezeAmt",
+		a.guarantee_method_cd AS "guaranteeMethodCd",
+		a.guarantee_method_note AS "guaranteeMethodNote",
+		b.id AS "creditProductLimit.id",
+		b.credit_limit_num AS "creditProductLimit.creditLimitNum",
+		b.customer_id AS "creditProductLimit.customerId",
+		b.credit_product AS "creditProductLimit.creditProduct",
+		b.start_date AS "creditProductLimit.startDate",
+		b.expiration_date AS "creditProductLimit.expirationDate",
+		b.term AS "creditProductLimit.term",
+		b.term_unit_cd AS "creditProductLimit.termUnitCd",
+		b.credit_limit AS "creditProductLimit.creditLimit",
+		b.available_limit AS "creditProductLimit.availableLimit",
+		b.outstnd_limit AS "creditProductLimit.outstndLimit",
+		b.currency_cd AS "creditProductLimit.currencyCd",
+		b.revolving_ind AS "creditProductLimit.revolvingInd",
+		b.credit_limit_type AS "creditProductLimit.creditLimitType",
+		b.create_by AS "creditProductLimit.createBy",
+		b.create_time AS "creditProductLimit.createTime",
+		b.update_by AS "creditProductLimit.updateBy",
+		b.modify_time AS "creditProductLimit.modifyTime",
+		b.remarks AS "creditProductLimit.remarks",
+		b.identy_ind AS "creditProductLimit.identyInd",
+		b.freeze_ind AS "creditProductLimit.freezeInd",
+		b.freeze_amt AS "creditProductLimit.freezeAmt",
+		b.parent_product_limit_id AS "creditProductLimit.parentProductLimitId",
+		b.limit_status_cd AS "creditProductLimit.limitStatusCd",
+		b.product_balance AS "creditProductLimit.productBalance"
+	</sql>
+
+  <!-- 嵌套结果 关联查询 -->
+  <select id="selectLimitInfoList" parameterType="java.util.Map" resultType="com.test.limitinfo.domain.LimitInfo">  
+   
+    select
+    <include refid="queryColumns" />
+    from credit_limit a left join credit_product_limit b on a.credit_limit_num = b.credit_limit_num 
+	<where>
+		a.limit_status_cd=1 
+		<if test="customer_id != null and customer_id != ''">
+			AND a.customer_id = #{customer_id}
+		</if>
+		<if test="customer_name != null and customer_name != ''">
+			AND a.customer_name = #{customer_name}
+		</if>
+	</where>
+
+  </select>  
+  
+   <select id="selectLimitInfoList2" parameterType="java.lang.String" resultType="com.test.limitinfo.domain.LimitInfo">  
+    select
+    	a.id AS "id",
+		a.credit_limit_num AS "creditLimitNum",
+		a.customer_name AS "customerName",
+		a.customer_id AS "customerId",
+		b.id AS "creditProductLimit.id",
+		b.credit_limit_num AS "creditProductLimit.creditLimitNum",
+		b.customer_id AS "creditProductLimit.customerId",
+		b.credit_product AS "creditProductLimit.creditProduct"
+    from credit_limit a left join credit_product_limit b on a.credit_limit_num = b.credit_limit_num 
+	where a.limit_status_cd=1 AND a.customer_id = #{customer_id}
+
+  </select> 
+
+
+</mapper>
